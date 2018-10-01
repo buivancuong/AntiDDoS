@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/acsim/CLionProjects/AntiDDoS/IP.cpp
+utility
+-
+IP.h
+C:/Users/acsim/CLionProjects/AntiDDoS/IP.h
+
+C:/Users/acsim/CLionProjects/AntiDDoS/IP.h
+iostream
+-
+bitset
+-
+string
+-
+
+C:/Users/acsim/CLionProjects/AntiDDoS/main.cpp
+iostream
+-
+fstream
+-
+map
+-
+string
+-
+vector
+-
+boost/algorithm/string.hpp
+-
+IP.h
+C:/Users/acsim/CLionProjects/AntiDDoS/IP.h
+
