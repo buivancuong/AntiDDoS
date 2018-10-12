@@ -9,7 +9,7 @@
 #include <bitset>
 #include <string>
 
-static const int N_BIT_SET = 65536;
+static const int N_BIT_SET = 1024;
 
 class IP {
 private:
@@ -35,6 +35,8 @@ public:
     int getFrequency();
 
     std::bitset<N_BIT_SET> getTrace();
+
+    int getTraceLast();
 
     void setSourceIP(std::string sourceIP);
 

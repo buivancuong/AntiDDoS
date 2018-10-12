@@ -6,7 +6,6 @@
 
 #include "IP.h"
 
-
 IP::IP() {
     this->frequency = 0;
 }
@@ -56,10 +55,18 @@ void IP::setLastTrace0() {
 }
 
 void IP::shiftLeftTrace() {
-    if (trace[N_BIT_SET - 1] == true) {
+    if (this->trace[N_BIT_SET - 1] == true) {
         this->frequency--;
     }
     trace<<=1;
+}
+
+int IP::getTraceLast() {
+    if (this->trace[0] == true) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 IP::~IP() = default;

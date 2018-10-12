@@ -6,12 +6,6 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/acsim/CLionProjects/AntiDDoS/IP.cpp
-utility
--
-IP.h
-C:/Users/acsim/CLionProjects/AntiDDoS/IP.h
-
 C:/Users/acsim/CLionProjects/AntiDDoS/IP.h
 iostream
 -
@@ -31,7 +25,13 @@ string
 -
 vector
 -
+deque
+-
 boost/algorithm/string.hpp
+-
+sstream
+-
+windows.h
 -
 IP.h
 C:/Users/acsim/CLionProjects/AntiDDoS/IP.h
