@@ -3,4 +3,4 @@ project(AntiDDoS)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(AntiDDoS main.cpp IP.cpp IP.h)
+add_executable(AntiDDoS main.cpp IP.cpp IP.h Request.cpp Request.h)

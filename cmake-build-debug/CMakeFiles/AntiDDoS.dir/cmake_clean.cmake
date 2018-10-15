@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/AntiDDoS.dir/main.cpp.obj"
   "CMakeFiles/AntiDDoS.dir/IP.cpp.obj"
+  "CMakeFiles/AntiDDoS.dir/Request.cpp.obj"
   "AntiDDoS.pdb"
   "AntiDDoS.exe"
   "AntiDDoS.exe.manifest"

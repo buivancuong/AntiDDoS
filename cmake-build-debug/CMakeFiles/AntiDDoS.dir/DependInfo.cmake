@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "C:/Users/acsim/CLionProjects/AntiDDoS/IP.cpp" "C:/Users/acsim/CLionProjects/AntiDDoS/cmake-build-debug/CMakeFiles/AntiDDoS.dir/IP.cpp.obj"
+  "C:/Users/acsim/CLionProjects/AntiDDoS/Request.cpp" "C:/Users/acsim/CLionProjects/AntiDDoS/cmake-build-debug/CMakeFiles/AntiDDoS.dir/Request.cpp.obj"
   "C:/Users/acsim/CLionProjects/AntiDDoS/main.cpp" "C:/Users/acsim/CLionProjects/AntiDDoS/cmake-build-debug/CMakeFiles/AntiDDoS.dir/main.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

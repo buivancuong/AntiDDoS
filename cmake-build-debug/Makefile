@@ -149,6 +149,33 @@ IP.cpp.s:
 	$(MAKE) -f CMakeFiles\AntiDDoS.dir\build.make CMakeFiles/AntiDDoS.dir/IP.cpp.s
 .PHONY : IP.cpp.s
 
+Request.obj: Request.cpp.obj
+
+.PHONY : Request.obj
+
+# target to build an object file
+Request.cpp.obj:
+	$(MAKE) -f CMakeFiles\AntiDDoS.dir\build.make CMakeFiles/AntiDDoS.dir/Request.cpp.obj
+.PHONY : Request.cpp.obj
+
+Request.i: Request.cpp.i
+
+.PHONY : Request.i
+
+# target to preprocess a source file
+Request.cpp.i:
+	$(MAKE) -f CMakeFiles\AntiDDoS.dir\build.make CMakeFiles/AntiDDoS.dir/Request.cpp.i
+.PHONY : Request.cpp.i
+
+Request.s: Request.cpp.s
+
+.PHONY : Request.s
+
+# target to generate assembly for a file
+Request.cpp.s:
+	$(MAKE) -f CMakeFiles\AntiDDoS.dir\build.make CMakeFiles/AntiDDoS.dir/Request.cpp.s
+.PHONY : Request.cpp.s
+
 main.obj: main.cpp.obj
 
 .PHONY : main.obj
@@ -188,6 +215,9 @@ help:
 	@echo ... IP.obj
 	@echo ... IP.i
 	@echo ... IP.s
+	@echo ... Request.obj
+	@echo ... Request.i
+	@echo ... Request.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

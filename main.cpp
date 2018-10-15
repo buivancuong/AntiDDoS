@@ -4,11 +4,12 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include <utility>
 #include <boost/algorithm/string.hpp>
 //#include <thread>
-#include <sstream>
 #include <windows.h>
 #include "IP.h"
+#include "Request.h"
 
 //void updateScreen(std::map<std::string, IP> ipList) { //std::map<std::string, IP> ipList, std::deque<std::string> requestDeque
 //
@@ -37,17 +38,39 @@
 int main() { //std::map<std::string, IP> ipList, std::deque<std::string> requestDeque
 
     std::map<std::string, IP> ipList;
-    std::deque<std::string> requestDeque;
+    std::deque< std::pair<std::string, double> > requestDeque;
 
     std::fstream logFile;
     logFile.open("../http.log", std::ios::in);
     std::string line;
+//    int count = 0;
 
     // Load http.log into requestDeque
     std::cout << "Loading LogFile to memory, please wait ... " << std::endl;
     while (!logFile.eof()) {
         std::getline(logFile, line);
-        requestDeque.push_back(line);
+//        std::cout << line << std::endl;
+        std::pair<std::string, double> pair;
+        std::vector<std::string> oneRequest;
+        boost::split(oneRequest, line, boost::is_any_of(" :"));
+        std::stringstream stringHour(oneRequest[0]);
+        std::stringstream stringMinute(oneRequest[1]);
+        std::stringstream stringSecond(oneRequest[2]);
+
+        int numHour, numMinute;
+        double numSecond;
+        stringHour >> numHour;
+        stringMinute >> numMinute;
+        stringSecond >> numSecond;
+
+        pair.second = numHour * 3600 + numMinute * 60 + numSecond;
+        pair.first = oneRequest[3];
+
+//        std::cout << requestDeque.size() << std::endl;
+//        Request *request = new Request(line);
+        requestDeque.push_back(pair);
+//        std::cout << "Queqe size: " << sizeof(requestDeque) << std::endl;
+//        delete request;
     }
     logFile.close();
     std::cout << "Complete loading LogFile to memory. Begin handle." << std::endl;
@@ -57,48 +80,33 @@ int main() { //std::map<std::string, IP> ipList, std::deque<std::string> request
 //    std::cout << "Continue main program without printScreen threading" << std::endl;
 
     // Handler on requestDeque || 00:15:38.654741000 118.70.54.240
-    line = requestDeque.front();
-    std::vector<std::string> oneRequest;
-    boost::split(oneRequest, line, boost::is_any_of(" :"));
-    std::stringstream stringHour(oneRequest[0]);
-    std::stringstream stringMinute(oneRequest[1]);
-    std::stringstream stringSecond(oneRequest[2]);
-    long double numHour, numMinute, numSecond;
-    stringHour >> numHour;
-    stringMinute >> numMinute;
-    stringSecond >> numSecond;
-    long double beginTime = numHour * 3600 + numMinute * 60 + numSecond ; // begin Time
+    std::pair< std::string, double > firstPair = requestDeque.front();
+
+    double beginTime = firstPair.second; // begin Time
     float deltaSlot = 0.001; // (second): slot time = 250 microsecond
-    long double endTime = beginTime + deltaSlot;
+    double endTime = beginTime + deltaSlot;
 
     while (!requestDeque.empty()) {
-//        std::cout << "quere size: " << requestDeque.size() << std::endl;
+        std::cout << requestDeque.size() << std::endl;
 
         while (!requestDeque.empty()) {
 //            std::cout << "beginTime: " << beginTime << " endTime: " << endTime << " slot: " << deltaSlot << std::endl;
 
-            line = requestDeque.front();
-            boost::split(oneRequest, line, boost::is_any_of(" :"));
-            std::stringstream oneStringHour(oneRequest[0]);
-            std::stringstream oneStringMinute(oneRequest[1]);
-            std::stringstream oneStringSecond(oneRequest[2]);
-            long double oneNumHour, oneNumMinute, oneNumSecond;
-            oneStringHour >> oneNumHour;
-            oneStringMinute >> oneNumMinute;
-            oneStringSecond >> oneNumSecond;
-            long double oneTimeStamp = oneNumHour * 3600 + oneNumMinute * 60 + oneNumSecond;
+            std::pair< std::string, double > requestPair = requestDeque.front();
+
+            double oneTimeStamp = requestPair.second;
 
             // if the request is on deltaSlot
 //            std::cout << "oneTimeStamp: " << oneTimeStamp << " endTime: " << endTime << std::endl;
             if (oneTimeStamp <= endTime) {
                 // find it on ipList
-                auto iter = ipList.find(oneRequest[3]);
+                auto iter = ipList.find(requestPair.first);
                 // if it is new IP
                 if (iter == ipList.end()) {
                     // create new IP
-                    IP *newIP = new IP(oneRequest[3], oneRequest[2]);
+                    IP *newIP = new IP(requestPair.first, requestPair.second);
 //                    std::cout << "new IP" << std::endl;
-                    ipList.insert(std::pair<std::string, IP>(oneRequest[3], *newIP));
+                    ipList.insert(std::pair<std::string, IP>(requestPair.first, *newIP));
                     // and set its last trace = 1
                     newIP->setLastTrace1();
 //                    std::cout << "set trace last: " << newIP->getTraceLast() << std::endl;
@@ -142,14 +150,14 @@ int main() { //std::map<std::string, IP> ipList, std::deque<std::string> request
 
     std::cout << "Complete handle Log File. Begin write result to ResultFile." << std::endl;
 
-    std::fstream writeResult;
-    writeResult.open("result", std::ios::out);
-    for (auto it : ipList) {
-        std::stringstream lineStream;
-        lineStream << it.first << " => " << it.second.getLastTimeStamp() << " " << "Freq: " << it.second.getFrequency() << std::endl;
-        writeResult << lineStream.str();
-    }
-    writeResult.close();
+//    std::fstream writeResult;
+//    writeResult.open("result", std::ios::out);
+//    for (auto it : ipList) {
+//        std::stringstream lineStream;
+//        lineStream << it.first << " => " << it.second.getLastTimeStamp() << " " << "Freq: " << it.second.getFrequency() << std::endl;
+//        writeResult << lineStream.str();
+//    }
+//    writeResult.close();
 
 //    while (!logFile.eof()) {
 //        std::getline(logFile, line);

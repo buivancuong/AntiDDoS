@@ -86,6 +86,12 @@
 		<Unit filename="C:/Users/acsim/CLionProjects/AntiDDoS/IP.h">
 			<Option target="AntiDDoS"/>
 		</Unit>
+		<Unit filename="C:/Users/acsim/CLionProjects/AntiDDoS/Request.cpp">
+			<Option target="AntiDDoS"/>
+		</Unit>
+		<Unit filename="C:/Users/acsim/CLionProjects/AntiDDoS/Request.h">
+			<Option target="AntiDDoS"/>
+		</Unit>
 		<Unit filename="C:/Users/acsim/CLionProjects/AntiDDoS/main.cpp">
 			<Option target="AntiDDoS"/>
 		</Unit>
