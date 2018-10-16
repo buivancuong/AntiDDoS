@@ -15,7 +15,7 @@ IP::IP(std::string srcIP) {
     this->frequency = 0;
 }
 
-IP::IP(std::string srcIP, long double lastTimeStamp) {
+IP::IP(std::string srcIP, double lastTimeStamp) {
     this->srcIP = std::move(srcIP);
     this->lastTimeStamp = lastTimeStamp;
     this->frequency = 0;
@@ -25,7 +25,7 @@ std::string IP::getSourceIP() {
     return this->srcIP;
 }
 
-long double IP::getLastTimeStamp() {
+double IP::getLastTimeStamp() {
     return this->lastTimeStamp;
 }
 
@@ -41,7 +41,7 @@ void IP::setSourceIP(std::string sourceIP) {
     this->srcIP = std::move(sourceIP);
 }
 
-void IP::setLastTimeStamp(long double lastTimeStamp) {
+void IP::setLastTimeStamp(double lastTimeStamp) {
     this->lastTimeStamp = lastTimeStamp;
 }
 

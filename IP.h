@@ -14,7 +14,7 @@ static const int N_BIT_SET = 1024;
 class IP {
 private:
 
-    long double lastTimeStamp;
+    double lastTimeStamp;
     std::string srcIP;
     int frequency;
     std::bitset<N_BIT_SET> trace;
@@ -24,13 +24,13 @@ public:
 
     explicit IP(std::string srcIP);
 
-    IP(std::string srcIP, long double lastTimeStamp);
+    IP(std::string srcIP, double lastTimeStamp);
 
     ~IP();
 
     std::string getSourceIP();
 
-    long double getLastTimeStamp();
+    double getLastTimeStamp();
 
     int getFrequency();
 
@@ -40,7 +40,7 @@ public:
 
     void setSourceIP(std::string sourceIP);
 
-    void setLastTimeStamp(long double lastTimeStamp);
+    void setLastTimeStamp(double lastTimeStamp);
 
     void setLastTrace1();
 

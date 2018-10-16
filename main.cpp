@@ -5,6 +5,7 @@
 #include <vector>
 #include <deque>
 #include <utility>
+#include <time.h>
 #include <boost/algorithm/string.hpp>
 //#include <thread>
 #include <windows.h>
@@ -41,7 +42,7 @@ int main() { //std::map<std::string, IP> ipList, std::deque<std::string> request
     std::deque< std::pair<std::string, double> > requestDeque;
 
     std::fstream logFile;
-    logFile.open("../http.log", std::ios::in);
+    logFile.open("../mini30shttp.log", std::ios::in);
     std::string line;
 //    int count = 0;
 
@@ -73,135 +74,64 @@ int main() { //std::map<std::string, IP> ipList, std::deque<std::string> request
 //        delete request;
     }
     logFile.close();
+    int counter = 0;
+    float deltaSlot = 0.001;
+    double beginTimeStamp = requestDeque.front().second;
+    double currentTimeStamp = 0;
     std::cout << "Complete loading LogFile to memory. Begin handle." << std::endl;
 
-//    std::thread printScreen (updateScreen, ipList, requestDeque);
-//    printScreen.join();
-//    std::cout << "Continue main program without printScreen threading" << std::endl;
+    clock_t start = clock();
 
-    // Handler on requestDeque || 00:15:38.654741000 118.70.54.240
-    std::pair< std::string, double > firstPair = requestDeque.front();
+    while (!requestDeque.empty()){
+        counter++;
+//        std::cout << "counter = " << counter << " queue size = " << requestDeque.size() << std::endl;
+        std::pair<std::string, double> requestPair = requestDeque.front();
+        currentTimeStamp = requestPair.second;
+        auto iter = ipList.find(requestPair.first);
+        if (iter == ipList.end()) {
+            IP *newIP = new IP(requestPair.first, requestPair.second);
+            newIP->setLastTrace1();
+            ipList.insert(std::pair<std::string, IP>(requestPair.first, *newIP));
+        } else {
+            int distanceDeltaSlot = static_cast<int>((requestPair.second - iter->second.getLastTimeStamp()) / deltaSlot);
+            if (distanceDeltaSlot >= 1) {
+                for (int i = 0; i < distanceDeltaSlot; i++) {
+                    iter->second.shiftLeftTrace();
+                }
+                iter->second.setLastTrace1();
+                iter->second.setLastTimeStamp(requestPair.second);
+            } else {
+                deltaSlot /= 2;
+            }
+        }
+        requestDeque.pop_front();
 
-    double beginTime = firstPair.second; // begin Time
-    float deltaSlot = 0.001; // (second): slot time = 250 microsecond
-    double endTime = beginTime + deltaSlot;
-
-    while (!requestDeque.empty()) {
-        std::cout << requestDeque.size() << std::endl;
-
-        while (!requestDeque.empty()) {
-//            std::cout << "beginTime: " << beginTime << " endTime: " << endTime << " slot: " << deltaSlot << std::endl;
-
-            std::pair< std::string, double > requestPair = requestDeque.front();
-
-            double oneTimeStamp = requestPair.second;
-
-            // if the request is on deltaSlot
-//            std::cout << "oneTimeStamp: " << oneTimeStamp << " endTime: " << endTime << std::endl;
-            if (oneTimeStamp <= endTime) {
-                // find it on ipList
-                auto iter = ipList.find(requestPair.first);
-                // if it is new IP
-                if (iter == ipList.end()) {
-                    // create new IP
-                    IP *newIP = new IP(requestPair.first, requestPair.second);
-//                    std::cout << "new IP" << std::endl;
-                    ipList.insert(std::pair<std::string, IP>(requestPair.first, *newIP));
-                    // and set its last trace = 1
-                    newIP->setLastTrace1();
-//                    std::cout << "set trace last: " << newIP->getTraceLast() << std::endl;
-                } else { // if it is on ipList, set last trace for it
-                    // if its last trace = 0 (not yet request)
-//                    std::cout << "old IP" << std::endl;
-//                    std::cout << "get trace last " << iter->second.getTraceLast() << std::endl;
-                    if (iter->second.getTraceLast() == 0) {
-                        // set its last trace = 1
-//                        std::cout << "not conflit" << std::endl;
-                        iter->second.setLastTrace1();
-                    } else { // if its last trace = 1 (this is second request on a deltaSlot)
-                        // devide deltaSlot/2
-//                        std::cout << "conflit" << std::endl;
-                        deltaSlot /= 2;
-                        // and break out small loop, also update beginTime and endTime for next small loop.
-                        beginTime = endTime;
-                        endTime = beginTime + deltaSlot;
-                        // oops, need shift left all trace!
-                        for (auto &it : ipList) {
-                            it.second.shiftLeftTrace();
-                        }
-                        break;
+        if (counter % N_BIT_SET == 0) {
+            if (static_cast<int>(currentTimeStamp - beginTimeStamp) % static_cast<int>(1 / deltaSlot) == 0) {
+                for (auto &it : ipList) {
+                    if ((currentTimeStamp - it.second.getLastTimeStamp()) / N_BIT_SET > 1) {
+                        ipList.erase(it.first);
                     }
                 }
-                // discard current element on requestDeque (first element of deque)
-                requestDeque.pop_front();
-            } else { // the request beyond the deltaSlot
-                // update beginTime and endTime for next small loop
-                beginTime = endTime;
-                endTime = beginTime + deltaSlot;
-                // oops, need shift left all trace!
-                for (auto &it : ipList) {
-                    it.second.shiftLeftTrace();
-                }
-                // break out small loop, do not pop_front requestDeque!
-                break;
             }
+
+
+            for (auto &iterator : ipList) {
+                if (iterator.second.getFrequency() >= 5) {
+                    std::cout << "IP: " << iterator.first << " Last: " << iterator.second.getLastTimeStamp() << " Freq: " << iterator.second.getFrequency() << std::endl;
+                }
+            }
+            std::cout << "*******************************************************" << std::endl;
         }
     }
 
-    std::cout << "Complete handle Log File. Begin write result to ResultFile." << std::endl;
+    clock_t end = clock();
 
-//    std::fstream writeResult;
-//    writeResult.open("result", std::ios::out);
-//    for (auto it : ipList) {
-//        std::stringstream lineStream;
-//        lineStream << it.first << " => " << it.second.getLastTimeStamp() << " " << "Freq: " << it.second.getFrequency() << std::endl;
-//        writeResult << lineStream.str();
-//    }
-//    writeResult.close();
+    std::cout << "Time: " << (double) (end - start) / CLOCKS_PER_SEC << std::endl;
 
-//    while (!logFile.eof()) {
-//        std::getline(logFile, line);
-//        std::vector<std::string> request;
-//        boost::split(request, line, boost::is_any_of(" "));
-//        // request[1] : time stamp
-//        // request [7] : srcIP
-//
-//        // if is new IP, add to map
-//        auto iter = ipList.find(request[7]);
-//        if (iter == ipList.end()) {
-//            IP *newIP = new IP(request[7], request[1]);
-//            ipList.insert(std::pair<std::string, IP>(request[7], *newIP));
-//        } else { // find on map
-//            (*iter).second.setLastTrace1();
-//            (*iter).second.shiftLeftTrace();
-//            for (auto it = ipList.begin(); it != ipList.end(); it++ ) {
-//                if (it != iter) {
-//                    (*it).second.setLastTrace0();
-//                    (*it).second.shiftLeftTrace();
-//                }
-//            }
-//        }
-////        updateScreen(ipList);
-////        Sleep(10);
-//    }
-//
-//    logFile.close();
-    std::cout << "Complete write result to Result File." << std::endl;
+    system("pause");
     return 0;
 }
-
-//int main() {
-//
-//    std::map<std::string, IP> ipList;
-//    std::deque<std::string> requestDeque;
-//
-//    std::thread mainThread(mainThreading, ipList, requestDeque);
-////    std::thread updateScreenThread(updateScreen);
-//    mainThread.join();
-////    updateScreenThread.join();
-//    system("pause");
-//    return 0;
-//}
 
 
 
