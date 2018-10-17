@@ -18,7 +18,7 @@ int main() {
     std::deque< std::pair<std::string, double> > requestDeque;
 
     std::fstream logFile;
-    logFile.open("../http.log", std::ios::in);
+    logFile.open("../web-app-ddos-attack-HTTP.txt", std::ios::in);
     std::string line;
     std::cout << "Loading LogFile to memory, please wait ... " << std::endl;
 
@@ -61,7 +61,7 @@ int main() {
             IP *newIP = new IP(requestPair.first, requestPair.second);
             newIP->setLastTrace1();
             ipList.insert(std::pair<std::string, IP>(requestPair.first, *newIP));
-            deltaSlot *= 2;
+            deltaSlot *= 1.5;
         } else {
             int distanceDeltaSlot = static_cast<int>((requestPair.second - iter->second.getLastTimeStamp()) / deltaSlot);
             if (distanceDeltaSlot >= 1) {
@@ -70,15 +70,24 @@ int main() {
                 }
                 iter->second.setLastTrace1();
                 iter->second.setLastTimeStamp(requestPair.second);
-                deltaSlot *= 2;
+                deltaSlot *= 1.5;
             } else {
+                iter->second.shiftLeftTrace();
+                iter->second.setLastTrace1();
+                iter->second.setLastTimeStamp(requestPair.second);
                 deltaSlot /= 2;
             }
         }
         requestDeque.pop_front();
 
-        if (nextTimeStamp - prevTimeStamp == 1) {
-            std::cout << "prev: " << prevTimeStamp << " next: " << nextTimeStamp << std::endl;
+        if (nextTimeStamp - prevTimeStamp == 12) {
+//            std::cout << "prev: " << prevTimeStamp << " next: " << nextTimeStamp << std::endl;
+            std::ofstream resultFile;
+            std::string fileName = "../result/";
+            fileName += std::to_string(prevTimeStamp);
+            resultFile.open(fileName, std::ios::out);
+            resultFile << "DELTA: " << deltaSlot * N_BIT_SET << " with deltaSlot: " << deltaSlot << std::endl;
+
             for (auto &iterator : ipList) {
                 int distanceDeltaSlot = static_cast<int>((requestPair.second - iterator.second.getLastTimeStamp()) / deltaSlot);
                 if (distanceDeltaSlot / N_BIT_SET > 1) {
@@ -87,13 +96,17 @@ int main() {
                     }
                 }
 
-                if (iterator.second.getFrequency() >= 10) {
-                    std::cout << "IP: " << iterator.first << " Last: " << iterator.second.getLastTimeStamp() << " Freq: " << iterator.second.getFrequency() << std::endl;
-                }
+                resultFile << "IP: " << iterator.first << " Freq: " << iterator.second.getFrequency() << std::endl;
+
+//                if (iterator.second.getFrequency() >= 0) {
+//                    std::cout << "IP: " << iterator.first << " Last: " << iterator.second.getLastTimeStamp() << " Freq: " << iterator.second.getFrequency() << std::endl;
+//                }
             }
-            std::cout << " *******************************************************" << std::endl;
+            resultFile.close();
+//            std::cout << " *******************************************************" << std::endl;
+            prevTimeStamp = nextTimeStamp;
         }
-        prevTimeStamp = nextTimeStamp;
+
     }
 
     clock_t end = clock();
