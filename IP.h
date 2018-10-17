@@ -8,6 +8,8 @@
 #include <iostream>
 #include <bitset>
 #include <string>
+//#include <deque>
+
 
 static const int N_BIT_SET = 1024;
 
@@ -18,6 +20,7 @@ private:
     std::string srcIP;
     int frequency;
     std::bitset<N_BIT_SET> trace;
+//    std::deque<int> listFreq;
 
 public:
     IP();
@@ -38,6 +41,8 @@ public:
 
     int getTraceLast();
 
+//    std::deque<int> getListFreq();
+
     void setSourceIP(std::string sourceIP);
 
     void setLastTimeStamp(double lastTimeStamp);
@@ -47,6 +52,10 @@ public:
     void setLastTrace0();
 
     void shiftLeftTrace();
+
+//    void updateListFreq();
+//
+//    std::string printListFreq();
 
 };
 

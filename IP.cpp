@@ -69,4 +69,21 @@ int IP::getTraceLast() {
     }
 }
 
+//std::deque<int> IP::getListFreq() {
+//    return this->listFreq;
+//}
+//
+//void IP::updateListFreq() {
+//    this->listFreq.push_front(this->frequency);
+//}
+//
+//std::string IP::printListFreq() {
+//    std::string string;
+//    for (auto &iterator : listFreq) {
+//        string += std::to_string(iterator);
+//        string += "\t";
+//    }
+//    return string;
+//}
+
 IP::~IP() = default;
